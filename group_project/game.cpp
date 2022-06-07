@@ -113,7 +113,6 @@ void endgamescene()
 	stopTimer(attack_animation2);
 	stopTimer(skill1_timer);
 	stopTimer(skill2_timer);
-	stopTimer(skill2_timer2);
 	stopTimer(skill3_timer1);
 	stopTimer(skill3_timer2);
 	stopTimer(skill4_timer);

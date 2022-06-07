@@ -26,7 +26,7 @@ int m_att = 101;
 bool skill1 = false, skill2 = false, skill3 = false;
 
 ObjectID player, p_attack, p_half_attack, skillButton1, skillButton2, skillButton3, HP, cooldown1, cooldown2, cooldown3, p_shield, m_bubble, b1, b2, b3, b4;
-TimerID player_animation, attack_animation1, attack_animation2, skill1_timer, skill2_timer, skill3_timer1, skill3_timer2, skill4_timer, skill2_timer2, barrier_timer;
+TimerID player_animation, attack_animation0, attack_animation1, attack_animation2, skill1_timer, skill2_timer, skill3_timer1, skill3_timer2, skill4_timer, skill2_timer2, barrier_timer;
 KeyCode c;
 
 TimerID check_timer;
@@ -108,6 +108,7 @@ void endgamescene()
 	stopTimer(d_timer1);
 	stopTimer(d_timer2);
 	stopTimer(player_animation);
+	stopTimer(attack_animation0);
 	stopTimer(attack_animation1);
 	stopTimer(attack_animation2);
 	stopTimer(skill1_timer);
@@ -144,6 +145,10 @@ void endgamescene()
 	m_movetime = m_movetime * 0.8;				//몬스터 이동시간 감소
 	m_warning = m_warning * 0.8;	
 	m_beam = m_beam * 0.8;			
+
+	showObject(skill1);
+	showObject(skill2);
+	showObject(skill3);
 
 	enterScene(store);
 }
@@ -325,6 +330,11 @@ void doll_timerCallback(TimerID timer)
 //게임 화면으로 넘어가는 함수
 void startgamescene()
 {
+	locateObject(m_HP_bar, gamescene, m_HP_barX, m_HP_barY);
+	locateObject(p_HP_bar, gamescene, p_HP_barX, p_HP_barY);
+	showObject(m_HP_bar);
+	showObject(m_HP_bar);
+
 	showTimer(attack_animation1);
 
 	t = 0;
@@ -341,8 +351,8 @@ void startgamescene()
 	setTimer(player_animation, ANIMATION_TIME);
 	startTimer(player_animation);
 
-	setTimer(attack_animation1, ATTACK_TIME);
-	startTimer(attack_animation1);
+	setTimer(attack_animation0, 2.f);
+	startTimer(attack_animation0);
 
 	setTimer(check_timer, CHECK_TIME);
 	startTimer(check_timer);
@@ -468,6 +478,7 @@ void teleport(KeyCode code)
 // 물풍선 스킬
 void waterballon()
 {
+	damaged = true;
 	hideObject(m);
 	showObject(m_bubble);
 
@@ -480,10 +491,10 @@ void waterballon()
 	stopTimer(m_timer3);
 	stopTimer(m_timer4);
 
-	setTimer(skill2_timer2, 0.5f);
-	startTimer(skill2_timer2);
-
 	showObject(cooldown2);
+
+	setTimer(skill2_timer, SKILL2_TIME);
+	startTimer(skill2_timer);
 }
 
 // 방어막 스킬
@@ -544,6 +555,11 @@ void player_timerCallback(TimerID timer)
 		startTimer(timer);
 	}
 
+	if (timer == attack_animation0) {
+		setTimer(attack_animation1, ATTACK_TIME);
+		startTimer(attack_animation1);
+	}
+	
 	if (timer == attack_animation1) {		//공격 애니메이션
 
 		critic();
@@ -588,6 +604,7 @@ void player_timerCallback(TimerID timer)
 	if (timer == skill2_timer) {                            //물풍선
 		hideObject(m_bubble);
 		showObject(m);
+		damaged = false;
 		
 		//물풍선에서 몬스터가 나오고난후 스킬 쿨타임 
 		setTimer(after_timer, 10.f);
@@ -599,15 +616,6 @@ void player_timerCallback(TimerID timer)
 	if (timer == after_timer)
 		hideObject(cooldown2);
 
-	if (timer == skill2_timer2) {
-		hideObject(b1);
-		hideObject(b2);
-		hideObject(b3);
-		hideObject(b4);
-
-		setTimer(skill2_timer, SKILL2_TIME);
-		startTimer(skill2_timer);
-	}
 	if (timer == skill3_timer1) {                            //방어막
 		hideObject(cooldown3);
 	}
@@ -725,6 +733,7 @@ int main()
 
 	//플레이어 관련 타이머
 	player_animation = createTimer(ANIMATION_TIME);
+	attack_animation0 = createTimer(2.f);
 	attack_animation1 = createTimer(ATTACK_TIME);
 	attack_animation2 = createTimer(ATTACK_SHOWN_TIME);
 	skill1_timer = createTimer(SKILL1_TIME);

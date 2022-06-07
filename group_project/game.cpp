@@ -32,7 +32,7 @@ KeyCode c;
 TimerID check_timer;
 bool damaged = false;
 
-int dx = 0, playerX = 600, playerY = 0, attackX = 0, attackY = 180;
+int dx = 0, playerX = 100, playerY = 0, attackX = 0, attackY = 180;
 
 ObjectID m_HP_bar, m_HP_bar_back, p_HP_bar, p_HP_bar_back;
 int m_HP_barX = 0, m_HP_barY = 680, p_HP_barX = 0, p_HP_barY = 0;
@@ -127,7 +127,8 @@ void endgamescene()
 	hideObject(p_shield);
 	hideObject(cooldown3);
 	damaged = false;
-
+	attackshown = false;
+	beamshown = false;
 
 	//순간이동
 	hideObject(cooldown1);
@@ -140,6 +141,7 @@ void endgamescene()
 	m_HP_barX = 0;
 	locateObject(m_HP_bar, gamescene, m_HP_barX, m_HP_barY);
 	locateObject(p_HP_bar, gamescene, p_HP_barX, p_HP_barY);
+
 	m_att += 20;					//몬스터 공격력 증가
 	m_movetime = m_movetime * 0.8;				//몬스터 이동시간 감소
 	m_warning = m_warning * 0.8;	
@@ -329,16 +331,26 @@ void doll_timerCallback(TimerID timer)
 //게임 화면으로 넘어가는 함수
 void startgamescene()
 {
-	locateObject(m_HP_bar, gamescene, m_HP_barX, m_HP_barY);
-	locateObject(p_HP_bar, gamescene, p_HP_barX, p_HP_barY);
-	showObject(m_HP_bar);
-	showObject(m_HP_bar);
+	playerX = 100;
+	mx = 900;
+	locateObject(player, gamescene, playerX, playerY);
+	showObject(player);
+	locateObject(m, gamescene, mx, 330);
+	showObject(m);
 
 	showTimer(attack_animation1);
 
 	t = 0;
 	enterScene(gamescene);
-	locateObject(m, gamescene, mx, 330);
+
+	p_HP_barX = 0;
+	m_HP_barX = 0;
+
+	locateObject(m_HP_bar, gamescene, m_HP_barX, m_HP_barY);
+	locateObject(p_HP_bar, gamescene, p_HP_barX, p_HP_barY);
+	showObject(m_HP_bar);
+	showObject(m_HP_bar);
+
 	locateObject(m_bubble, gamescene, mx, 370);
 
 	setTimer(m_timer1, m_movetime);

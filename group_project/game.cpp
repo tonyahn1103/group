@@ -161,6 +161,7 @@ void gameover()
 	stopTimer(d_timer1);
 	stopTimer(d_timer2);
 	stopTimer(player_animation);
+	stopTimer(attack_animation0);
 	stopTimer(attack_animation1);
 	stopTimer(attack_animation2);
 	stopTimer(skill1_timer);
